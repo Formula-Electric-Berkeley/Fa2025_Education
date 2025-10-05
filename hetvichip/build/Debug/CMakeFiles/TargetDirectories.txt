@@ -1,0 +1,6 @@
+/Users/hetvi/feb/Fa2025_Education/hetvichip/build/Debug/CMakeFiles/hetvichip.dir
+/Users/hetvi/feb/Fa2025_Education/hetvichip/build/Debug/CMakeFiles/edit_cache.dir
+/Users/hetvi/feb/Fa2025_Education/hetvichip/build/Debug/CMakeFiles/rebuild_cache.dir
+/Users/hetvi/feb/Fa2025_Education/hetvichip/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
+/Users/hetvi/feb/Fa2025_Education/hetvichip/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
+/Users/hetvi/feb/Fa2025_Education/hetvichip/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir

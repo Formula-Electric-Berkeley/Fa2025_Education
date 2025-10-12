@@ -154,12 +154,11 @@ int main(void)
 
     // --- Main Loop ---
     while (1) {
-        uint8_t xl_data_ready;
-        uint8_t gy_data_ready;
+        lsm6dsv_data_ready_t data_ready;
         // 5. Check if new data is available
-        lsm6dsv_xl_flag_data_ready_get(&dev_ctx, &xl_data_ready);
-        lsm6dsv_gy_flag_data_ready_get(&dev_ctx, &gy_data_ready);
-        if (xl_data_ready) {
+        lsm6dsv_flag_data_ready_get(&dev_ctx, &data_ready);
+      
+        if (data_ready.drdy_xl) {
             int16_t raw_acc[3];
             float acc_mg[3]; // To store data in mg
             // 6. Read raw accelerometer data
@@ -168,9 +167,9 @@ int main(void)
             acc_mg[0] = lsm6dsv_from_fs2_to_mg(raw_acc[0]);
             acc_mg[1] = lsm6dsv_from_fs2_to_mg(raw_acc[1]);
             acc_mg[2] = lsm6dsv_from_fs2_to_mg(raw_acc[2]);
-            printf("Acc [mg]: X=%6.2f Y=%6.2f Z=%6.2f\n", acc_mg[0], acc_mg[1], acc_mg[2]);
+            printf("Acc [mg]: X=%lu Y=%lu Z=%lu\n", (uint32_t) acc_mg[0], (uint32_t) acc_mg[1], (uint32_t) acc_mg[2]);
         }
-        if (gy_data_ready) {
+        if (data_ready.drdy_gy) {
             int16_t raw_gyro[3];
             float gyro_mdps[3]; // To store data in mdps
             // 6. Read raw gyroscope data
@@ -179,7 +178,7 @@ int main(void)
             gyro_mdps[0] = lsm6dsv_from_fs2000_to_mdps(raw_gyro[0]);
             gyro_mdps[1] = lsm6dsv_from_fs2000_to_mdps(raw_gyro[1]);
             gyro_mdps[2] = lsm6dsv_from_fs2000_to_mdps(raw_gyro[2]);
-            printf("Gyro [mdps]: X=%6.2f Y=%6.2f Z=%6.2f\n", gyro_mdps[0], gyro_mdps[1], gyro_mdps[2]);
+            printf("Gyro [mdps]: X=%lu Y=%lu Z=%lu\n", (uint32_t) gyro_mdps[0], (uint32_t) gyro_mdps[1], (uint32_t) gyro_mdps[2]);
         }
         platform_delay(100); // Wait a bit before the next read
 

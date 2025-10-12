@@ -1155,10 +1155,10 @@
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : "No help, variable specified on the command line."
+					"value" : "The CMake toolchain file"
 				}
 			],
-			"type" : "UNINITIALIZED",
+			"type" : "FILEPATH",
 			"value" : "/Users/hetvi/feb/Fa2025_Education/hetvichip/cmake/gcc-arm-none-eabi.cmake"
 		},
 		{

@@ -50,6 +50,7 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+
 /* USER CODE BEGIN PFP */
 #ifdef __GNUC__
 #define PUTCHAR_PROTOTYPE int __io__putchar(int ch)

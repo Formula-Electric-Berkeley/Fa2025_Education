@@ -47,7 +47,10 @@ I2C_HandleTypeDef hi2c1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+// I2C address for LIS2DW12 (DFRobot breakout board)
+// 0x19 is the 7-bit address, 0x32 is left-shifted for STM32 HAL
+#define LIS2DW12_I2C_ADDR_7BIT  0x19
+#define LIS2DW12_I2C_ADDR_HAL   (LIS2DW12_I2C_ADDR_7BIT << 1)  // 0x32
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,20 +71,56 @@ PUTCHAR_PROTOTYPE{
   return ch;
 }
 
+void i2c_scan(I2C_HandleTypeDef *hi2c);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+// I2C bus scan function for debugging
+void i2c_scan(I2C_HandleTypeDef *hi2c) {
+    printf("\r\n--- I2C Bus Scan ---\r\n");
+    printf("Scanning I2C bus...\r\n");
+
+    uint8_t devices_found = 0;
+
+    for (uint8_t i = 0; i < 128; i++) {
+        HAL_StatusTypeDef result = HAL_I2C_IsDeviceReady(hi2c, (uint16_t)(i << 1), 1, 10);
+        if (result == HAL_OK) {
+            printf("Device found at 0x%02X (7-bit) / 0x%02X (8-bit HAL)\r\n", i, (i << 1));
+            devices_found++;
+        }
+    }
+
+    if (devices_found == 0) {
+        printf("No I2C devices found! Check your connections.\r\n");
+    } else {
+        printf("Total devices found: %d\r\n", devices_found);
+    }
+
+    printf("Expected LIS2DW12 at 0x%02X (7-bit) / 0x%02X (8-bit HAL)\r\n",
+           LIS2DW12_I2C_ADDR_7BIT, LIS2DW12_I2C_ADDR_HAL);
+    printf("--- End of Scan ---\r\n\r\n");
+}
+
 static int32_t platform_write(void *handle, uint8_t reg, const uint8_t *bufp, uint16_t len) {
-    HAL_I2C_Mem_Write(handle, 0x32, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)bufp, len, 100);
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Write(handle, LIS2DW12_I2C_ADDR_HAL, reg, I2C_MEMADD_SIZE_8BIT, (uint8_t*)bufp, len, 100);
+    if (status != HAL_OK) {
+        printf("I2C Write Error: %d\r\n", status);
+        return -1;
+    }
     return 0;
 }
 
-// Found this approach online but dont fully get it yet Im assuming form the defneitions of our HAL FUnctions. 
+// Platform-specific I2C read function for the LIS2DW12 driver
 
 static int32_t platform_read(void *handle, uint8_t reg, uint8_t *bufp, uint16_t len) {
-    HAL_I2C_Mem_Read(handle, 0x32, reg, I2C_MEMADD_SIZE_8BIT, bufp, len, 100);
+    HAL_StatusTypeDef status = HAL_I2C_Mem_Read(handle, LIS2DW12_I2C_ADDR_HAL, reg, I2C_MEMADD_SIZE_8BIT, bufp, len, 100);
+    if (status != HAL_OK) {
+        printf("I2C Read Error: %d\r\n", status);
+        return -1;
+    }
     return 0;
 }
 /* USER CODE END 0 */
@@ -120,23 +159,37 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
+  printf("\r\n=== LIS2DW12 Accelerometer Initialization ===\r\n");
+
+  // Scan I2C bus to check device connectivity
+  i2c_scan(&hi2c1);
+
   stmdev_ctx_t dev_ctx;
   dev_ctx.write_reg = platform_write;
   dev_ctx.read_reg = platform_read;
   dev_ctx.handle = &hi2c1;
 
   uint8_t devID;
-  lis2dw12_device_id_get(&dev_ctx, &devID);
+  int32_t ret = lis2dw12_device_id_get(&dev_ctx, &devID);
 
-  printf("Device ID: 0x%X\r\n", devID);
-  if (devID != 0x2F) {
+  if (ret != 0) {
+    printf("Failed to read Device ID!\r\n");
     Error_Handler();
   }
 
-  lis2dw12_data_rate_set(&dev_ctx, LIS2DW12_XL_ODR_800Hz); 
+  printf("Device ID: 0x%02X (Expected: 0x44)\r\n", devID);
+  if (devID != LIS2DW12_ID) {  // LIS2DW12_ID is 0x44
+    printf("ERROR: Wrong device ID! Check I2C connections.\r\n");
+    Error_Handler();
+  }
+
+  printf("LIS2DW12 initialized successfully!\r\n");
+
+  lis2dw12_data_rate_set(&dev_ctx, LIS2DW12_XL_ODR_800Hz);
 
   lis2dw12_power_mode_set(&dev_ctx, LIS2DW12_HIGH_PERFORMANCE);
 
+  printf("Configuration complete: ODR=800Hz, Mode=High Performance\r\n\r\n");
 
   /* USER CODE END 2 */
 

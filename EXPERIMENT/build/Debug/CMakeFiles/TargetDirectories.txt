@@ -1,6 +1,0 @@
-C:/Users/prana/OneDrive/tess/FEB-CS/Fa2025_Education/EXPERIMENT/build/Debug/CMakeFiles/EXPERIMENT.dir
-C:/Users/prana/OneDrive/tess/FEB-CS/Fa2025_Education/EXPERIMENT/build/Debug/CMakeFiles/edit_cache.dir
-C:/Users/prana/OneDrive/tess/FEB-CS/Fa2025_Education/EXPERIMENT/build/Debug/CMakeFiles/rebuild_cache.dir
-C:/Users/prana/OneDrive/tess/FEB-CS/Fa2025_Education/EXPERIMENT/build/Debug/cmake/stm32cubemx/CMakeFiles/STM32_Drivers.dir
-C:/Users/prana/OneDrive/tess/FEB-CS/Fa2025_Education/EXPERIMENT/build/Debug/cmake/stm32cubemx/CMakeFiles/edit_cache.dir
-C:/Users/prana/OneDrive/tess/FEB-CS/Fa2025_Education/EXPERIMENT/build/Debug/cmake/stm32cubemx/CMakeFiles/rebuild_cache.dir
